@@ -1,0 +1,79 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fff;
+
+}
+
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #12679c;
+  padding: 10px 20px;
+}
+
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bolder;
+  font: size 2rem;
+  margin: auto;
+}
+
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  color: rgb(14, 166, 110);
+}
+
+.hero h1 {
+  font-size: 3em;
+}
+
+.hero button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #22d78c;
+  color: rgb(236, 76, 13);
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.footer {
+  background-color: #12679c;
+  color: #ccc;
+  text-align: center;
+  padding: 20px;
+}
+.nav-links li a:hover{
+  color: rgb(146, 42, 59);
+  border-radius: 2px;
+}
+
+.under{
+  display: flex;
+  list-style: none;
+  color: rgb(218, 23, 46);
+ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+ justify-content: flex-end;
+padding-right: 20px;
+
+}
+.nn{
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  color: aqua;
+ 
+}
+
