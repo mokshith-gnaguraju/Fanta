@@ -19,7 +19,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t $IMAGE_NAME:$TAG ."
+                    bat "docker build -t $IMAGE_NAME:$TAG ."
                 }
             }
         }
@@ -31,7 +31,7 @@ pipeline {
                     usernameVariable: 'dhanamjeevi1989',
                     passwordVariable: 'Mokshith@21'
                 )]) {
-                    sh """
+                    bat """
                     echo $PASS | docker login -u $USER --password-stdin
                     docker push $IMAGE_NAME:$TAG
                     """
@@ -42,7 +42,7 @@ pipeline {
         stage('Deploy to AWS EC2') {
             steps {
                 sshagent([SSH_CREDENTIALS]) {
-                    sh """
+                    bat """
                     ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP '
                     
                     docker stop myapp || true
