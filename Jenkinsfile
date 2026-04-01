@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "dhanamjeevi1989/Fanta"
+        IMAGE_NAME = "dhanamjeevi1989/fanta"
         TAG = "latest"
         EC2_IP = "3.86.226.238"
         SSH_CREDENTIALS = "ec2-ssh-key"
