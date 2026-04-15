@@ -27,8 +27,8 @@ pipeline {
         script {
             withCredentials([usernamePassword(
                 credentialsId: 'docker-creds',
-                usernameVariable: 'USER',
-                passwordVariable: 'PASS'
+               usernameVariable: 'dhanamjeevi1989USER',
+                passwordVariable: 'Mokshith@21'
             )]) {
                 sh "echo $PASS | docker login -u $USER --password-stdin"
                 sh "docker push dhanamjeevi1989/fanta:latest"
