@@ -22,21 +22,20 @@ pipeline {
             }
         }
 
-       stage('Push to Docker Hub') {
+       stage('Push to DockerHub') {
     steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'dockerhub-creds',
-            usernameVariable: 'USER',
-            passwordVariable: 'PASS'
-        )]) {
-            bat """
-            echo %PASS% | docker login -u %USER% --password-stdin
-            docker push %IMAGE_NAME%:%TAG%
-            """
+        script {
+            withCredentials([usernamePassword(
+                credentialsId: 'docker-creds',
+                usernameVariable: 'USER',
+                passwordVariable: 'PASS'
+            )]) {
+                sh "echo $PASS | docker login -u $USER --password-stdin"
+                sh "docker push dhanamjeevi1989/fanta:latest"
+            }
         }
     }
 }
-
         stage('Deploy to AWS EC2') {
             steps {
                 sshagent([SSH_CREDENTIALS]) {
