@@ -38,22 +38,17 @@ pipeline {
 			}
 		}
 
-        stage('Deploy to AWS EC2') {
-            steps {
-                sshagent([SSH_CREDENTIALS]) {
-                    bat """
-                    ssh -o StrictHostKeyChecking=no ubuntu@%EC2_IP% "
-                    
-                    docker stop myapp || true
-                    docker rm myapp || true
-                    
-                    docker pull %IMAGE_NAME%:%TAG%
-                    
-                    docker run -d -p 80:8080 --name myapp %IMAGE_NAME%:%TAG%
-                    "
-                    """
-                }
-            }
+        stage('Deploy to EC2') {
+    steps {
+        sshagent(['ec2-ssh-key']) {
+            sh '''
+            ssh -o StrictHostKeyChecking=no ubuntu@<EC2-IP> << EOF
+            docker pull dhanamjeevi1989/fanta:latest
+            docker stop fanta-app || true
+            docker rm fanta-app || true
+            docker run -d -p 80:8080 --name fanta-app dhanamjeevi1989/fanta:latest
+            EOF
+            '''
         }
     }
 }
