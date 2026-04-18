@@ -29,11 +29,12 @@ pipeline {
 					usernameVariable: 'USER',
 					passwordVariable: 'PASS'
 				)]) {
-					bat """
-					echo %PASS% | docker login -u %USER% --password-stdin
-					docker push %IMAGE_NAME%:%TAG%
-					"""
-				}
+                    bat """
+                    docker logout
+                    docker login -u %USER% -p "%PASS%"
+                    docker push %IMAGE_NAME%:%TAG%
+                    """
+                }
 			}
 		}
 
