@@ -22,24 +22,6 @@ pipeline {
             }
         }
 
-       stage('Push to Docker Hub') {
-			steps {
-				withCredentials([usernamePassword(
-					credentialsId: 'dockerhub-creds',
-					usernameVariable: 'USER',
-					passwordVariable: 'PASS'
-				)]) {
-                    bat """
-                    docker logout
-                    docker login -u %USER% -p "%PASS%"
-                    docker push %IMAGE_NAME%:%TAG%
-                    """
-                }
-			}
-		}
-
-        stages {
-
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
@@ -50,11 +32,27 @@ pipeline {
                     bat """
                     docker logout
                     docker login -u %USER% -p "%PASS%"
-                    docker push dhanamjeevi1989/fanta:latest
+                    docker push %IMAGE_NAME%:%TAG%
                     """
                 }
             }
         }
 
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(['ec2-ssh-key']) {
+                    bat """
+                    ssh -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
+                    docker pull %IMAGE_NAME%:%TAG% ^&^&
+                    docker stop fanta-container || true ^&^&
+                    docker rm fanta-container || true ^&^&
+                    docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%
+                    """
+
+                    
+                }
+            }
+        }
+
     }
-    }
+}
