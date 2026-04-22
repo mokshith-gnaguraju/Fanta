@@ -5,7 +5,6 @@ pipeline {
         IMAGE_NAME = "dhanamjeevi1989/fanta"
         TAG = "latest"
         EC2_IP = "3.86.226.238"
-        SSH_CREDENTIALS = "ec2-ssh-key"
     }
 
     stages {
@@ -31,23 +30,22 @@ pipeline {
                 )]) {
                     bat """
                     docker logout
-                    docker login -u %USER% -p "%PASS%"
+                    echo %PASS% | docker login -u %USER% --password-stdin
                     docker push %IMAGE_NAME%:%TAG%
                     """
                 }
             }
         }
-stage('Deploy to EC2') {
-    steps {
-        bat """
-        ssh -i C:\\jenkins\\Grace.pem -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
-        "docker pull %IMAGE_NAME%:%TAG% && ^
-        docker stop fanta-container 2>nul && ^
-        docker rm fanta-container 2>nul && ^
-        docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
-        """
-    }
-}
 
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(['ec2-ssh-key']) {
+                    bat """
+                    ssh -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
+                    "docker pull %IMAGE_NAME%:%TAG% && docker stop fanta-container || true && docker rm fanta-container || true && docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
+                    """
+                }
+            }
+        }
     }
 }
