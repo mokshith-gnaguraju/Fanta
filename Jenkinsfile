@@ -40,7 +40,7 @@ pipeline {
 stage('Deploy to EC2') {
     steps {
         bat """
-        ssh -i C:\\jenkins\\Parle.pem -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
+        ssh -i C:\\jenkins\\Grace.pem -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
         "docker pull %IMAGE_NAME%:%TAG% && ^
         docker stop fanta-container 2>nul && ^
         docker rm fanta-container 2>nul && ^
