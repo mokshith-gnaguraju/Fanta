@@ -47,6 +47,7 @@ pipeline {
             icacls "%KEY_FILE%" /inheritance:r
             icacls "%KEY_FILE%" /grant:r "SYSTEM:R"
             icacls "%KEY_FILE%" /grant:r "Administrators:R"
+            icacls "%KEY_FILE%" ...
 
             ssh -vvv -i "%KEY_FILE%" -o StrictHostKeyChecking=no %USER%@54.80.216.154 "docker ps"
             """
