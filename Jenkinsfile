@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "dhanamjeevi1989/fanta"
         TAG = "latest"
-        EC2_IP = "3.86.226.238"
+        EC2_IP = "3.82.6.147"
     }
 
     stages {
@@ -39,7 +39,7 @@ pipeline {
         stage('Deploy to EC2') {
     steps {
         bat """
-        ssh -i C:\\Users\\Dhanamjeevi\\Downloads\\Grace.pem -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
+        ssh -i C:\\Users\\Dhanamjeevi\\Downloads\\India.pem -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
         "docker pull %IMAGE_NAME%:%TAG% && docker stop fanta-container || true && docker rm fanta-container || true && docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
         """
     }
