@@ -45,13 +45,13 @@ pipeline {
         )]) {
             bat """
             icacls "%KEY_FILE%" /inheritance:r
-            icacls "%KEY_FILE%" /grant:r "%USERNAME%:R"
+            icacls "%KEY_FILE%" /grant:r "SYSTEM:R"
+            icacls "%KEY_FILE%" /grant:r "Administrators:R"
 
-            ssh -i "%KEY_FILE%" -o StrictHostKeyChecking=no %USER%@54.80.216.154 "docker pull dhanamjeevi1989/fanta:latest && docker stop fanta-container || true && docker rm fanta-container || true && docker run -d -p 80:80 --name fanta-container dhanamjeevi1989/fanta:latest"
+            ssh -vvv -i "%KEY_FILE%" -o StrictHostKeyChecking=no %USER%@54.80.216.154 "docker ps"
             """
         }
     }
 }
-    }
 
 }
