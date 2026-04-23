@@ -38,21 +38,16 @@ pipeline {
 
         stage('Deploy to EC2') {
     steps {
-        withCredentials([sshUserPrivateKey(
-            credentialsId: 'ec2-ssh-key',
-            keyFileVariable: 'KEY_FILE',
-            usernameVariable: 'USER'
-        )]) {
-            bat """
-            ssh -i %KEY_FILE% -o StrictHostKeyChecking=no %USER%@%EC2_IP% ^
+        sshagent(['ec2-key']) {
+            bat '''
+            ssh -o StrictHostKeyChecking=no ec2-user@54.80.216.154 ^
             "docker pull dhanamjeevi1989/fanta:latest && ^
-            docker stop fanta-container || true && ^
-            docker rm fanta-container || true && ^
-            docker run -d -p 80:80 --name fanta-container dhanamjeevi1989/fanta:latest"
-            """
+             docker stop fanta-container || true && ^
+             docker rm fanta-container || true && ^
+             docker run -d -p 80:80 --name fanta-container dhanamjeevi1989/fanta:latest"
+            '''
         }
     }
 }
-
     }
 }
