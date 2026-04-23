@@ -37,23 +37,17 @@ pipeline {
         }
 
         stage('Deploy to EC2') {
-    steps {
-        withCredentials([sshUserPrivateKey(
-            credentialsId: 'ec2-key',
-            keyFileVariable: 'KEY_FILE',
-            usernameVariable: 'USER'
-        )]) {
-            bat """
-            icacls "%KEY_FILE%" /inheritance:r
-            icacls "%KEY_FILE%" /grant:r "SYSTEM:R"
-            icacls "%KEY_FILE%" /grant:r "Administrators:R"
-            icacls "%KEY_FILE%" ...
-
-            ssh -vvv -i "%KEY_FILE%" -o StrictHostKeyChecking=no %USER%@54.80.216.154 "docker ps"
-            """
+            steps {
+                sshagent(['ec2-ssh-key']) {
+                    bat """
+                    ssh -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
+                    "docker pull %IMAGE_NAME%:%TAG% ^&^& ^
+                    docker stop fanta-container || true ^&^& ^
+                    docker rm fanta-container || true ^&^& ^
+                    docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
+                    """
+                }
+            }
         }
     }
-}
-
-}
 }
