@@ -41,16 +41,18 @@ pipeline {
 
     stages {
 
-        stage('Deploy to EC2') {
+        stage('Build') {
             steps {
-                sshagent(['your-credential-id']) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no ec2-user@54.80.216.154 "
-                    docker pull dhanamjeevi1989/fanta:latest &&
-                    docker stop fanta-container || true &&
-                    docker rm fanta-container || true &&
-                    docker run -d -p 80:80 --name fanta-container dhanamjeevi1989/fanta:latest
-                    "
+                echo 'Build step'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sshagent(['ec2-key']) {
+                    bat '''
+                    ssh -o StrictHostKeyChecking=no ec2-user@54.80.216.154 ^
+                    "docker pull dhanamjeevi1989/fanta:latest && docker stop fanta-container || true && docker rm fanta-container || true && docker run -d -p 80:80 --name fanta-container dhanamjeevi1989/fanta:latest"
                     '''
                 }
             }
