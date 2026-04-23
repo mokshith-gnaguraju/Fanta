@@ -22,43 +22,30 @@ pipeline {
         }
 
         stage('Push to Docker Hub') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'dockerhub-creds',
-            usernameVariable: 'USER',
-            passwordVariable: 'PASS'
-        )]) {
-            bat """
-            docker login -u %USER% -p %PASS%
-            docker push %IMAGE_NAME%:%TAG%
-            """
-        }
-    }
-}
-
-        pipeline {
-    agent any
-
-    stages {
-
-        stage('Build') {
             steps {
-                echo 'Build step'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sshagent(['ec2-key']) {
-                    bat '''
-                    ssh -o StrictHostKeyChecking=no ec2-user@54.80.216.154 ^
-                    "docker pull dhanamjeevi1989/fanta:latest && docker stop fanta-container || true && docker rm fanta-container || true && docker run -d -p 80:80 --name fanta-container dhanamjeevi1989/fanta:latest"
-                    '''
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
+                )]) {
+                    bat """
+                    docker login -u %USER% -p %PASS%
+                    docker push %IMAGE_NAME%:%TAG%
+                    """
                 }
             }
         }
 
-    }
-}
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(['ec2-key']) {
+                    bat """
+                    ssh -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
+                    "docker pull %IMAGE_NAME%:%TAG% && docker stop fanta-container || true && docker rm fanta-container || true && docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
+                    """
+                }
+            }
+        }
+
     }
 }
