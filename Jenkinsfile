@@ -38,13 +38,12 @@ pipeline {
 
       stage('Deploy to EC2') {
     steps {
-        bat """
-       ssh -i C://jenkins//Balance.pem -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
-        "docker pull %IMAGE_NAME%:%TAG% ^&^& ^
-        docker stop fanta-container || true ^&^& ^
-        docker rm fanta-container || true ^&^& ^
-        docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
-        """
+        withCredentials([file(credentialsId: 'ec2-pem-file', variable: 'PEM_FILE')]) {
+            bat """
+            ssh -i %PEM_FILE% -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
+            "docker pull %IMAGE_NAME%:%TAG% && docker stop fanta-container || true && docker rm fanta-container || true && docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
+            """
+        }
     }
 }
     }
