@@ -36,11 +36,13 @@ pipeline {
             }
         }
 
-     stage('Deploy to EC2') {
+    stage('Deploy to EC2') {
     steps {
         withCredentials([file(credentialsId: 'ec2-pem-file', variable: 'PEM_FILE')]) {
             bat """
-            icacls "%PEM_FILE%" /grant:r "%USERNAME%:R"
+            icacls "%PEM_FILE%" /inheritance:r
+            icacls "%PEM_FILE%" /remove "BUILTIN\\Users"
+            icacls "%PEM_FILE%" /grant:r SYSTEM:R
 
             ssh -i "%PEM_FILE%" -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
             "docker pull %IMAGE_NAME%:%TAG% && docker stop fanta-container || true && docker rm fanta-container || true && docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
