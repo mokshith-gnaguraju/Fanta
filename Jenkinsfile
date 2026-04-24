@@ -36,18 +36,16 @@ pipeline {
             }
         }
 
-        stage('Deploy to EC2') {
-            steps {
-               sshagent(['ec2-key']) {
-                    bat """
-                    ssh -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
-                    "docker pull %IMAGE_NAME%:%TAG% ^&^& ^
-                    docker stop fanta-container || true ^&^& ^
-                    docker rm fanta-container || true ^&^& ^
-                    docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
-                    """
-                }
-            }
-        }
+      stage('Deploy to EC2') {
+    steps {
+        bat """
+        ssh -i C:\\Users\\Dhanamjeevi\\Downloads\\Balance.pem -o StrictHostKeyChecking=no ec2-user@%EC2_IP% ^
+        "docker pull %IMAGE_NAME%:%TAG% ^&^& ^
+        docker stop fanta-container || true ^&^& ^
+        docker rm fanta-container || true ^&^& ^
+        docker run -d -p 80:80 --name fanta-container %IMAGE_NAME%:%TAG%"
+        """
+    }
+}
     }
 }
